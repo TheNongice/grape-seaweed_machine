@@ -18,6 +18,7 @@ exit_pg = 0
 # Setup Mode (Class Instances)
 line_msg = LINE(LINE_TOKEN)
 
+# Function to easily manages programing
 def decode_text(text: str):
     enc = text.decode('utf-8')
     enc = enc.strip('\r\n')
