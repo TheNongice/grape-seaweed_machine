@@ -1,3 +1,16 @@
+/*
+ *
+ * Arduino Sensor Core Reader
+ *
+ * @category   IoT Device
+ * @author     TheNongice
+ * @copyright  2023 © Wasawat Junnasaksri and Hatsathon Sachjakul as PCSHSST
+ * @license    MIT License
+ * @link       https://github.com/TheNongice/grape-seaweed_machine
+ * @date       13/8/2565 - 21:35
+ * @editor     TheNongice Wasawat (@_ngix's)
+*/
+
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #define PH_SENSOR A0
@@ -5,7 +18,7 @@
 #define ONE_WIRE_BUS 2
 
 #define Offset 0.00
-int turbidityRead;
+int turbidityRead, problem;
 float turbidityV, phValue, temp_water;
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature temp_sensor(&oneWire);
@@ -45,6 +58,7 @@ float pH_avg(){
 }
 
 void loop() {
+  problem = 0;
   // Check value from sensor approx every 45 seconds
   unsigned long checkTime = millis();
 
@@ -62,21 +76,30 @@ void loop() {
   /* pH Detector */
   if(phValue < 8){
     Serial.println("N_ACID");
+    problem++;
   }else if(phValue > 9){
     Serial.println("N_ALKALINE");
+    problem++;
   }
 
   /* Turbidity Dectector */
   if(turbidityV < 3.8){
     Serial.println("N_WATER");
+    problem++;
   }
 
   /* Temperature Dectector */
   if(temp_water > 30){
     // RT = Reduce Temperature
     Serial.println("RT_WATER");
+    problem++;
   }else if(temp_water < 25){
     // IT = Increase Temperature
     Serial.println("IT_WATER");
+    problem++;
+  }
+
+  if(problem < 1){
+    Serial.println("Normally")
   }
 }
